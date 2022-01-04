@@ -2,7 +2,7 @@
 import { assert } from "chai";
 import path from "path";
 
-import { ExampleHardhatRuntimeEnvironmentField } from "../src/ExampleHardhatRuntimeEnvironmentField";
+import { ChainlinkPriceFeedConfig } from "../src/ChainlinkPriceFeedConfigRuntimeEnvironmentField";
 
 import { useEnvironment } from "./helpers";
 
@@ -12,13 +12,16 @@ describe("Integration tests examples", function () {
 
     it("Should add the example field", function () {
       assert.instanceOf(
-        this.hre.example,
-        ExampleHardhatRuntimeEnvironmentField
+        this.hre.chainlinkPriceFeedConfig,
+        ChainlinkPriceFeedConfig
       );
     });
 
-    it("The example filed should say hello", function () {
-      assert.equal(this.hre.example.sayHello(), "hello");
+    it("Should log ChainlinkPriceFeedConfig initialization data", function () {
+      assert.equal(
+        this.hre.chainlinkPriceFeedConfig.initChainlinkPriceFeedConfig(),
+        "hello"
+      );
     });
   });
 
@@ -35,11 +38,11 @@ describe("Integration tests examples", function () {
 });
 
 describe("Unit tests examples", function () {
-  describe("ExampleHardhatRuntimeEnvironmentField", function () {
+  describe("ChainlinkPriceFeedConfigRuntimeEnvironmentField", function () {
     describe("sayHello", function () {
-      it("Should say hello", function () {
-        const field = new ExampleHardhatRuntimeEnvironmentField();
-        assert.equal(field.sayHello(), "hello");
+      it("Should return ChainlinkPriceFeedConfig", function () {
+        const field = new ChainlinkPriceFeedConfig();
+        assert.equal(field.initChainlinkPriceFeedConfig(), "hello");
       });
     });
   });
