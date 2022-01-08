@@ -9,31 +9,49 @@ export class ChainlinkPriceFeedConfig {
   chainlinkPriceFeeds?: ChainlinkPriceFeedApiResponse;
   currentTicker?: string;
   currentProxyAddress?: string;
+  currentAggregatorContractAddress?: string;
 
-  constructor() {
-    console.log("Constructor runs");
-  }
+  constructor() {}
 
   public async initChainlinkPriceFeedConfig(
     ticker: string,
-    network: EthereumNetworkType | null = "Mainnet"
+    network: EthereumNetworkType = "Mainnet"
   ) {
-    this.currentTicker = ticker;
-    this.currentEthereumNetwork = network || "Mainnet";
+    this.currentTicker = ticker.replace(/\s+/g, "");
+    this.currentEthereumNetwork = network;
     this.chainlinkPriceFeeds = await ChainlinkDataFeeds.getAllPriceFeeds();
-    this.currentProxyAddress = await this.convertTickerToProxyAddress(ticker);
-    console.log(this.chainlinkPriceFeeds);
+    this.currentProxyAddress = await this.convertTickerToProxyAddress(
+      this.currentTicker
+    );
+    console.log(
+      `ticker ${this.currentTicker}, currentProxyAddress ${this.currentProxyAddress}`
+    );
+    this.currentAggregatorContractAddress = await this.deployProxyConfiguratorByteCode();
     return "Initializing Chainlink plugin runtime...";
   }
 
-  private deployProxyConfiguratorByteCode() {
+  private async deployProxyConfiguratorByteCode(): Promise<string> {
     // TODO: Deploy bytecode ... @yhayun
     return "Deploying bytecode of contract...";
   }
 
-  private convertTickerToProxyAddress(ticker: string) {
+  private async convertTickerToProxyAddress(ticker: string) {
     // TODO: Write Ticker
-    return "Deploying bytecode of contract...";
+    if (!ticker || ticker.length < 1) {
+      throw new Error("Must pass a valid pair ticker...");
+    }
+    const trimmedTicker = ticker.trim();
+    const proxies = await ChainlinkDataFeeds.getEthereumProxiesForNetwork();
+    const foundProxy = proxies.find((p: { pair: string; proxy: string }) => {
+      const normalizedPair = p.pair.replace(/\s+/g, "");
+      return normalizedPair === trimmedTicker;
+    });
+    if (!foundProxy || foundProxy === undefined) {
+      throw new Error(
+        `Could not find valid proxy for provided ticker: ${ticker} `
+      );
+    }
+    return foundProxy.proxy;
   }
 
   public getChainlinkConfig() {
