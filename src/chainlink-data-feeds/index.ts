@@ -1,25 +1,6 @@
 import axios from "axios";
 
-type Proxy = {
-  pair: string;
-  deviationThreshold: number;
-  heartbeat: string;
-  decimals: number;
-  proxy: string;
-};
-
-type EthereumNetwork = {
-  name: string;
-  url: string;
-  proxies: Array<Proxy>;
-};
-
-type ChainlinkPriceFeedApiResponse = {
-  "ethereum-addresses": {
-    title: string;
-    networks: Array<EthereumNetwork>;
-  };
-};
+import type { ChainlinkPriceFeedApiResponse } from "../chainlink-data-types";
 
 const CHAINLINK_DOCS_CONSTANTS = {
   ETHEREUM_ADDRESSES_ENDPOINT:
