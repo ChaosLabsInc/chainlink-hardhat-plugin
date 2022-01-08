@@ -1,21 +1,39 @@
+import ChainlinkDataFeeds from "./chainlink-data-feeds";
+
 export class ChainlinkPriceFeedConfig {
-  public initChainlinkPriceFeedConfig() {
+  chainlinkPriceFeeds: any;
+
+  constructor() {
+    console.log("Constructor runs");
+  }
+
+  public async initChainlinkPriceFeedConfig() {
+    const res = await ChainlinkDataFeeds.getAllPriceFeeds();
+    console.log("init res ", res);
     return "Initializing Chainlink plugin runtime...";
+  }
+
+  private deployProxyConfiguratorByteCode() {
+    return "Deploying bytecode of contract...";
   }
 
   public logChainlinkConfig() {
     return "Reading Chainlink runtime...";
   }
 
-  public readChainlinkConfig() {
+  public setChainlinkConfig() {
     return "Reading Chainlink runtime...";
   }
 
-  public writePrice(address: string, price: string) {
+  public getChainlinkConfig() {
+    return "Reading Chainlink runtime...";
+  }
+
+  public setPrice(address: string, price: string) {
     return `Writing price: ${price} to oracle at address ${address}`;
   }
 
-  public readPrice(address: string) {
+  public getPrice(address: string) {
     return `Reading price feed: at address ${address}`;
   }
 }

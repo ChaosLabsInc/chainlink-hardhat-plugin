@@ -42,9 +42,6 @@ extendConfig(
 );
 
 extendEnvironment((hre) => {
-  // We add a field to the Hardhat Runtime Environment here.
-  // We use lazyObject to avoid initializing things until they are actually
-  // needed.
   hre.chainlinkPriceFeedConfig = lazyObject(
     () => new ChainlinkPriceFeedConfig()
   );

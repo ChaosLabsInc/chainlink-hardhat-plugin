@@ -1,7 +1,29 @@
 import axios from "axios";
 
+type Proxy = {
+  pair: string;
+  deviationThreshold: number;
+  heartbeat: string;
+  decimals: number;
+  proxy: string;
+};
+
+type EthereumNetwork = {
+  name: string;
+  url: string;
+  proxies: Array<Proxy>;
+};
+
+type ChainlinkPriceFeedApiResponse = {
+  "ethereum-addresses": {
+    title: string;
+    networks: Array<EthereumNetwork>;
+  };
+};
+
 const CHAINLINK_DOCS_CONSTANTS = {
-  ETHEREUM_ADDRESSES_ENDPOINT: "https://cl-docs-addresses.web.app/addresses.json",
+  ETHEREUM_ADDRESSES_ENDPOINT:
+    "https://cl-docs-addresses.web.app/addresses.json",
   ETHEREUM_NETWORKS: {
     MAINNET: "Ethereum Mainnet",
     KOVAN: "Kovan Testnet",
@@ -20,19 +42,30 @@ const CHAINLINK_DOCS_CONSTANTS = {
 export = {
   getAllPriceFeeds: async function getAllPriceFeeds() {
     try {
-      const priceFeedPayload = await axios.get<any>(CHAINLINK_DOCS_CONSTANTS.ETHEREUM_ADDRESSES_ENDPOINT);
-      const priceFeedData = priceFeedPayload.data;
+      const priceFeedPayload = await axios.get<any>(
+        CHAINLINK_DOCS_CONSTANTS.ETHEREUM_ADDRESSES_ENDPOINT
+      );
+      const priceFeedData: ChainlinkPriceFeedApiResponse =
+        priceFeedPayload.data;
+      // @ts-ignore
       return priceFeedData[CHAINLINK_DOCS_CONSTANTS.PAYLOAD_KEYS.ETHEREUM];
     } catch (e) {
       throw new Error(`Failed to fetch all price feeds...[${e}]`);
     }
   },
-  getEthereumProxiesForNetwork: async function getEthereumProxiesForNetwork(network = "Ethereum Mainnet") {
+  getEthereumProxiesForNetwork: async function getEthereumProxiesForNetwork(
+    network = "Ethereum Mainnet"
+  ) {
     try {
-      const priceFeedPayload = await axios.get<any>(CHAINLINK_DOCS_CONSTANTS.ETHEREUM_ADDRESSES_ENDPOINT);
+      const priceFeedPayload = await axios.get<any>(
+        CHAINLINK_DOCS_CONSTANTS.ETHEREUM_ADDRESSES_ENDPOINT
+      );
       const priceFeedData = priceFeedPayload.data;
-      const etherumPriceFeeds = priceFeedData[CHAINLINK_DOCS_CONSTANTS.PAYLOAD_KEYS.ETHEREUM];
-      const foundNetwork = etherumPriceFeeds.networks.find((n: any) => n.name === network);
+      const etherumPriceFeeds =
+        priceFeedData[CHAINLINK_DOCS_CONSTANTS.PAYLOAD_KEYS.ETHEREUM];
+      const foundNetwork = etherumPriceFeeds.networks.find(
+        (n: any) => n.name === network
+      );
       if (foundNetwork === undefined) {
         throw new Error(`Could not find ${network} while searching networks`);
       }

@@ -17,11 +17,9 @@ describe("Integration tests examples", function () {
       );
     });
 
-    it("Should log ChainlinkPriceFeedConfig initialization data", function () {
-      assert.equal(
-        this.hre.chainlinkPriceFeedConfig.initChainlinkPriceFeedConfig(),
-        "Initializing Chainlink plugin runtime..."
-      );
+    it("Should log ChainlinkPriceFeedConfig initialization data", async function () {
+      const priceFeedConfig = await this.hre.chainlinkPriceFeedConfig.initChainlinkPriceFeedConfig();
+      assert.equal(priceFeedConfig, "Initializing Chainlink plugin runtime...");
     });
   });
 
@@ -40,10 +38,11 @@ describe("Integration tests examples", function () {
 describe("Unit tests examples", function () {
   describe("ChainlinkPriceFeedConfigRuntimeEnvironmentField", function () {
     describe("get ChainlinkPriceFeedConfig", function () {
-      it("Should return ChainlinkPriceFeedConfig", function () {
+      it("Should return ChainlinkPriceFeedConfig", async function () {
         const field = new ChainlinkPriceFeedConfig();
+        const priceFeedConfig = await field.initChainlinkPriceFeedConfig();
         assert.equal(
-          field.initChainlinkPriceFeedConfig(),
+          priceFeedConfig,
           "Initializing Chainlink plugin runtime..."
         );
       });
