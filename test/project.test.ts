@@ -10,7 +10,7 @@ describe("Integration tests examples", function () {
   describe("Hardhat Runtime Environment extension", function () {
     useEnvironment("hardhat-project");
 
-    it("Should add the example field", function () {
+    it("Should log ChainlinkPriceFeedConfig initialization data", function () {
       assert.instanceOf(
         this.hre.chainlinkPriceFeedConfig,
         ChainlinkPriceFeedConfig
@@ -20,7 +20,7 @@ describe("Integration tests examples", function () {
     it("Should log ChainlinkPriceFeedConfig initialization data", function () {
       assert.equal(
         this.hre.chainlinkPriceFeedConfig.initChainlinkPriceFeedConfig(),
-        "hello"
+        "Initializing Chainlink plugin runtime..."
       );
     });
   });
@@ -39,10 +39,13 @@ describe("Integration tests examples", function () {
 
 describe("Unit tests examples", function () {
   describe("ChainlinkPriceFeedConfigRuntimeEnvironmentField", function () {
-    describe("sayHello", function () {
+    describe("get ChainlinkPriceFeedConfig", function () {
       it("Should return ChainlinkPriceFeedConfig", function () {
         const field = new ChainlinkPriceFeedConfig();
-        assert.equal(field.initChainlinkPriceFeedConfig(), "hello");
+        assert.equal(
+          field.initChainlinkPriceFeedConfig(),
+          "Initializing Chainlink plugin runtime..."
+        );
       });
     });
   });
