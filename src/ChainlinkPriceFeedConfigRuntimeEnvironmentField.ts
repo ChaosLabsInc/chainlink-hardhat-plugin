@@ -1,8 +1,10 @@
+import { ContractTransaction, ethers, Contract } from "ethers";
 import ChainlinkDataFeeds from "./chainlink-data-feeds";
 import {
   ChainlinkPriceFeedApiResponse,
   EthereumNetworkType,
 } from "./chainlink-data-types";
+import { DeploySetterContract } from "./contracts";
 
 export class ChainlinkPriceFeedConfig {
   currentEthereumNetwork?: "Mainnet" | "Kovan" | "Rinkeby";
@@ -10,6 +12,8 @@ export class ChainlinkPriceFeedConfig {
   currentTicker?: string;
   currentProxyAddress?: string;
   currentAggregatorContractAddress?: string;
+  mockerContract?: Contract;
+  provider?: ethers.providers.Provider; //TODO - init provider - @omer & @yhayun
 
   constructor() {}
 
@@ -26,13 +30,19 @@ export class ChainlinkPriceFeedConfig {
     console.log(
       `ticker ${this.currentTicker}, currentProxyAddress ${this.currentProxyAddress}`
     );
-    this.currentAggregatorContractAddress = await this.deployProxyConfiguratorByteCode();
+    this.mockerContract = await this.deployMockerContract();
+    this.currentAggregatorContractAddress = this.mockerContract.address;
     return "Initializing Chainlink plugin runtime...";
   }
 
-  private async deployProxyConfiguratorByteCode(): Promise<string> {
-    // TODO: Deploy bytecode ... @yhayun
-    return "Deploying bytecode of contract...";
+  private async deployMockerContract(): Promise<Contract> {
+    if (this.currentProxyAddress === undefined) {
+      throw new Error("current proxy address is not defined");
+    }
+    if (this.provider === undefined) {
+      throw new Error("provider is not defined");
+    }
+    return await DeploySetterContract(this.currentProxyAddress, this.provider);
   }
 
   private async convertTickerToProxyAddress(ticker: string) {
@@ -64,12 +74,18 @@ export class ChainlinkPriceFeedConfig {
   }
 
   public async setPrice(address: string, price: string) {
-    // TODO: Smart Contract call... @yhayun
+    if (this.mockerContract === undefined) {
+      throw new Error("mocker contract is not defined");
+    }
+    await this.mockerContract.setAnswer(price);
     return `Writing price: ${price} to oracle at address ${address}`;
   }
 
-  public async getPrice(address: string) {
-    // TODO: Smart Contract call... @yhayun
-    return `Reading price feed: at address ${address}`;
+  public async getPrice(address: string): Promise<any> {
+    if (this.mockerContract === undefined) {
+      throw new Error("mocker contract is not defined");
+    }
+    const round = await this.mockerContract.latestRoundData();
+    return round.answer;
   }
 }
