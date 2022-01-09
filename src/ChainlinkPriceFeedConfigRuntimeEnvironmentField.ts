@@ -73,7 +73,7 @@ export class ChainlinkPriceFeedConfig {
     };
   }
 
-  public async setPrice(address: string, price: string) {
+  public async setPrice(address: string, price: string): Promise<string> {
     if (this.mockerContract === undefined) {
       throw new Error("mocker contract is not defined");
     }
