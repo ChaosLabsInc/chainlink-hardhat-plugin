@@ -7,27 +7,31 @@ import { ChainlinkPriceFeedConfig } from "../src/ChainlinkPriceFeedConfigRuntime
 import { useEnvironment } from "./helpers";
 
 describe("Integration tests examples", function () {
-  describe("Hardhat Runtime Environment extension", function () {
-    useEnvironment("hardhat-project");
+  this.timeout(30000),
+    describe("Hardhat Runtime Environment extension", function () {
+      useEnvironment("hardhat-project");
 
-    it("Should log ChainlinkPriceFeedConfig initialization data", function () {
-      assert.instanceOf(
-        this.hre.chainlinkPriceFeedConfig,
-        ChainlinkPriceFeedConfig
-      );
-    });
+      it("Should log ChainlinkPriceFeedConfig initialization data", function () {
+        assert.instanceOf(
+          this.hre.chainlinkPriceFeedConfig,
+          ChainlinkPriceFeedConfig
+        );
+      });
 
-    it("Should log ChainlinkPriceFeedConfig initialization data", async function () {
-      const priceFeedConfig = await this.hre.chainlinkPriceFeedConfig.initChainlinkPriceFeedConfig(
-        "ETH/USD",
-        "Mainnet"
-      );
-      assert.equal(priceFeedConfig, "Initializing Chainlink plugin runtime...");
+      it("Should log ChainlinkPriceFeedConfig initialization data", async function () {
+        const priceFeedConfig = await this.hre.chainlinkPriceFeedConfig.initChainlinkPriceFeedConfig(
+          "ETH/USD",
+          "Mainnet"
+        );
+        assert.equal(
+          priceFeedConfig,
+          "Initializing Chainlink plugin runtime..."
+        );
+      });
     });
-  });
 
   describe("HardhatConfig extension", function () {
-    useEnvironment("hardhat-project");
+    this.timeout(30000), useEnvironment("hardhat-project");
 
     it("Should add the newPath to the config", function () {
       assert.equal(
@@ -39,19 +43,20 @@ describe("Integration tests examples", function () {
 });
 
 describe("Unit tests examples", function () {
-  describe("ChainlinkPriceFeedConfigRuntimeEnvironmentField", function () {
-    describe("get ChainlinkPriceFeedConfig", function () {
-      it("Should return ChainlinkPriceFeedConfig", async function () {
-        const field = new ChainlinkPriceFeedConfig();
-        const priceFeedConfig = await field.initChainlinkPriceFeedConfig(
-          "ETH/USD",
-          "Mainnet"
-        );
-        assert.equal(
-          priceFeedConfig,
-          "Initializing Chainlink plugin runtime..."
-        );
+  this.timeout(30000),
+    describe("ChainlinkPriceFeedConfigRuntimeEnvironmentField", function () {
+      describe("get ChainlinkPriceFeedConfig", function () {
+        it("Should return ChainlinkPriceFeedConfig", async function () {
+          const field = new ChainlinkPriceFeedConfig(this.hre);
+          const priceFeedConfig = await field.initChainlinkPriceFeedConfig(
+            "ETH/USD",
+            "Mainnet"
+          );
+          assert.equal(
+            priceFeedConfig,
+            "Initializing Chainlink plugin runtime..."
+          );
+        });
       });
     });
-  });
 });

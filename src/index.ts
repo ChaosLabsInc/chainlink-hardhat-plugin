@@ -43,6 +43,6 @@ extendConfig(
 
 extendEnvironment((hre) => {
   hre.chainlinkPriceFeedConfig = lazyObject(
-    () => new ChainlinkPriceFeedConfig()
+    () => new ChainlinkPriceFeedConfig(hre)
   );
 });

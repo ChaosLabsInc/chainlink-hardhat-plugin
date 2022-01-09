@@ -1,9 +1,10 @@
 import { ethers, utils } from "ethers";
 import { JsonRpcProvider } from "@ethersproject/providers";
-import hre from "hardhat";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 export async function DeploySetterContract(
   originProxyAddress: string,
+  hre: HardhatRuntimeEnvironment,
   provider: ethers.providers.Provider
 ): Promise<ethers.Contract> {
   const originContract = await genChainLinkAggregatorContract(
@@ -11,9 +12,12 @@ export async function DeploySetterContract(
     provider
   );
   const lastRoundData = await originContract.latestRoundData();
+  const rpcProvider = new ethers.providers.JsonRpcProvider();
+
   const mockFactory = new ethers.ContractFactory(
     SetterContractABI,
-    SetterContractBytecode
+    SetterContractBytecode,
+    rpcProvider.getSigner()
   );
   const mockContract = await mockFactory.deploy(
     lastRoundData.roundId,
@@ -22,26 +26,29 @@ export async function DeploySetterContract(
     lastRoundData.updatedAt,
     lastRoundData.answeredInRound
   );
-  mockAggregator(originContract, mockContract, provider);
+
+  mockAggregator(originContract, mockContract, hre, provider);
   return mockContract;
 }
 
 async function mockAggregator(
   originAggregator: ethers.Contract,
   aggregatorManipulator: ethers.Contract,
+  hre: HardhatRuntimeEnvironment,
   provider: ethers.providers.Provider
 ): Promise<void> {
   const chainlinkAggregatorOwner = await originAggregator.owner();
-  await hre.network.provider.send("hardhat_setBalance", [
+  const rpcProvider = new ethers.providers.JsonRpcProvider();
+
+  await rpcProvider.send("hardhat_impersonateAccount", [
     chainlinkAggregatorOwner,
-    utils.parseEther("10"),
-    ,
   ]);
-  await hre.network.provider.request({
-    method: "hardhat_impersonateAccount",
-    params: [chainlinkAggregatorOwner],
-  });
-  const rpcProvider = provider as JsonRpcProvider;
+
+  await rpcProvider.send("hardhat_setBalance", [
+    chainlinkAggregatorOwner,
+    `0x${utils.parseEther("100").toString()}`,
+  ]);
+
   const chainlinkAggOwnerSigner = await rpcProvider.getSigner(
     chainlinkAggregatorOwner
   );
@@ -56,10 +63,6 @@ async function mockAggregator(
     await originAggregator
       .connect(chainlinkAggOwnerSigner)
       .confirmAggregator(aggregatorManipulator.address);
-    await hre.network.provider.request({
-      method: "hardhat_stopImpersonatingAccount",
-      params: [chainlinkAggregatorOwner],
-    });
   } catch (e) {
     throw new Error(`Failed to confirm new aggregator...[${e}]`);
   }

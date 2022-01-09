@@ -1,4 +1,5 @@
-import { ContractTransaction, ethers, Contract } from "ethers";
+import { ethers, Contract } from "ethers";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 import ChainlinkDataFeeds from "./chainlink-data-feeds";
 import {
   ChainlinkPriceFeedApiResponse,
@@ -13,9 +14,13 @@ export class ChainlinkPriceFeedConfig {
   currentProxyAddress?: string;
   currentAggregatorContractAddress?: string;
   mockerContract?: Contract;
-  provider?: ethers.providers.Provider; //TODO - init provider - @omer & @yhayun
+  provider: ethers.providers.Provider;
+  hre: HardhatRuntimeEnvironment;
 
-  constructor() {}
+  constructor(hre: HardhatRuntimeEnvironment, url?: string) {
+    this.hre = hre;
+    this.provider = ethers.getDefaultProvider(url);
+  }
 
   public async initChainlinkPriceFeedConfig(
     ticker: string,
@@ -39,10 +44,12 @@ export class ChainlinkPriceFeedConfig {
     if (this.currentProxyAddress === undefined) {
       throw new Error("current proxy address is not defined");
     }
-    if (this.provider === undefined) {
-      throw new Error("provider is not defined");
-    }
-    return await DeploySetterContract(this.currentProxyAddress, this.provider);
+
+    return await DeploySetterContract(
+      this.currentProxyAddress,
+      this.hre,
+      this.provider
+    );
   }
 
   private async convertTickerToProxyAddress(ticker: string) {
