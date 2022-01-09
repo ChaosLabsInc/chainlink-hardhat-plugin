@@ -60,3 +60,22 @@ describe("Unit tests examples", function () {
       });
     });
 });
+
+describe("set price test", function () {
+  this.timeout(30000),
+    describe("ChainlinkPriceFeedConfigRuntimeEnvironmentField", function () {
+      describe("get ChainlinkPriceFeedConfig", function () {
+        it("Should return ChainlinkPriceFeedConfig", async function () {
+          const field = new ChainlinkPriceFeedConfig(this.hre);
+          const priceFeedConfig = await field.initChainlinkPriceFeedConfig(
+            "ETH/USD",
+            "Mainnet"
+          );
+          const prevPrice = await field.getPrice();
+          await field.setPrice("555");
+          const nextPrice = await field.getPrice();
+          assert.notEqual(prevPrice, nextPrice);
+        });
+      });
+    });
+});

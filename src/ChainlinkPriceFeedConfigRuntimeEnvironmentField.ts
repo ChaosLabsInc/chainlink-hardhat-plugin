@@ -80,15 +80,15 @@ export class ChainlinkPriceFeedConfig {
     };
   }
 
-  public async setPrice(address: string, price: string): Promise<string> {
+  public async setPrice(price: string): Promise<string> {
     if (this.mockerContract === undefined) {
       throw new Error("mocker contract is not defined");
     }
     await this.mockerContract.setAnswer(price);
-    return `Writing price: ${price} to oracle at address ${address}`;
+    return `Writing price: ${price} to oracle`;
   }
 
-  public async getPrice(address: string): Promise<any> {
+  public async getPrice(): Promise<any> {
     if (this.mockerContract === undefined) {
       throw new Error("mocker contract is not defined");
     }
