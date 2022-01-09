@@ -43,10 +43,6 @@ Next, we'll want to run a mainnet fork. We need the fork so we can have a snapsh
 
 ## <a name="quickstart"></a> QuickStart
 
-1. `git clone https://github.com/ChaosLabsInc/chaos-labs-chainlink.git`
-2. `cd chaos-labs-chainlink`
-3. `npm i` - Installing project libs.
-4. `npx hardhat compile` - Compiling solidity contracts
 5. **In a separate terminal window (spawn a new window in iTerm with cmd+D)** run: `npx hardhat node --fork https://eth-mainnet.alchemyapi.io/v2/<YOUR_ALCHEMY_KEY>` - Spinning a mainnet fork locally.
 6. `npm run start`
 
@@ -55,8 +51,6 @@ After running the quickstart you should have the following: 2 terminals, 1 runni
 ![Setup screenshot](https://github.com/ChaosLabsInc/chaos-labs-chainlink/blob/master/img/TerminalSetup.png)
 
 ## Recommended Usage
-
-This repo is meant to serve as an implementation spec for mocking oracle return values. This is a resource and reference for smart contract developers to implement such strategies and practices as part of their development lifecycle.
 
 ## Example Flow
 

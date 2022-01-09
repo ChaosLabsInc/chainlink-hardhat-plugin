@@ -32,9 +32,6 @@ export class ChainlinkPriceFeedConfig {
     this.currentProxyAddress = await this.convertTickerToProxyAddress(
       this.currentTicker
     );
-    console.log(
-      `ticker ${this.currentTicker}, currentProxyAddress ${this.currentProxyAddress}`
-    );
     this.mockerContract = await this.deployMockerContract();
     this.currentAggregatorContractAddress = this.mockerContract.address;
     return "Initializing Chainlink plugin runtime...";
@@ -53,7 +50,6 @@ export class ChainlinkPriceFeedConfig {
   }
 
   private async convertTickerToProxyAddress(ticker: string) {
-    // TODO: Write Ticker
     if (!ticker || ticker.length < 1) {
       throw new Error("Must pass a valid pair ticker...");
     }
