@@ -66,14 +66,14 @@ describe("set price test", function () {
     describe("ChainlinkPriceFeedConfigRuntimeEnvironmentField", function () {
       describe("get ChainlinkPriceFeedConfig", function () {
         it("Should return ChainlinkPriceFeedConfig", async function () {
-          const field = new ChainlinkPriceFeedConfig(this.hre);
-          const priceFeedConfig = await field.initChainlinkPriceFeedConfig(
+          const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
+          await chainlinkConfig.initChainlinkPriceFeedConfig(
             "ETH/USD",
             "Mainnet"
           );
-          const prevPrice = await field.getPrice();
-          await field.setPrice("555");
-          const nextPrice = await field.getPrice();
+          const prevPrice = await chainlinkConfig.getPrice();
+          await chainlinkConfig.setPrice("555");
+          const nextPrice = await chainlinkConfig.getPrice();
           assert.notEqual(prevPrice, nextPrice);
         });
       });

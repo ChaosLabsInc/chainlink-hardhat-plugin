@@ -1,6 +1,6 @@
 {
-  "name": "chainlink-price-feed-config-hardhat-plugin",
-  "version": "0.0.2",
+  "name": "@chaos-labs/chainlink-hardhat-plugin",
+  "version": "0.0.1",
   "description": "Hardhat plugin for configuring Chainlink price feed return values when forking mainnet.",
   "repository": "github:ChaosLabsInc/chainlink-price-feed-config-hardhat-plugin",
   "author": "Chaos Labs Inc.",
@@ -19,7 +19,8 @@
     "test": "mocha --exit --recursive 'test/**/*.test.ts'",
     "build": "tsc",
     "watch": "tsc -w",
-    "prepublishOnly": "npm run build"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test"
   },
   "files": [
     "dist/src/",

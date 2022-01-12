@@ -18,7 +18,7 @@ Volatility is a DeFi constant and is something that all protocols and applicatio
 
 Imagine a lending protocol (Maker, AAVE, Benqi, Spectral.finance, etc..) that accepts Ethereum as collateral against stablecoin loans. What happens on a day like Black Thursday, when Ethereum prices cascade negatively to the tune of ~70% in a 48 hour time frame? Well, a lot of things happen 🤦.
 
-![Black Thursday Img](https://github.com/ChaosLabsInc/chaos-labs-chainlink/blob/master/img/Cascading-ETH.png)
+![Black Thursday Img](https://github.com/ChaosLabsInc/chainlink-hardhat-plugin/blob/master/img/Cascading-ETH.png)
 
 One critical aspect of responding to market volatiltiy is protocol keepers triggering liquidations and thus ensuring protocol solvency.
 
@@ -41,20 +41,23 @@ npm install @ChaosLabsInc/chainlink-hardhat-plugin
 Import the plugin in your `hardhat.config.js`:
 
 ```js
-require("chainlink-hardhat-plugin");
+require("@chaos-labs/chainlink-hardhat-plugin");
 ```
 
 Or if you are using TypeScript, in your `hardhat.config.ts`:
 
 ```ts
-import "chainlink-hardhat-plugin";
+import "@chaos-labs/chainlink-hardhat-plugin";
 ```
 
 ## Usage
 
-<_A description of how to use this plugin. How to use the tasks if there are any, etc._>
-
-There are no additional steps you need to take for this plugin to work.
-
-Install it and access ethers through the Hardhat Runtime Environment anywhere
-you need it (tasks, scripts, tests, etc).
+```js
+const chainlinkConfig = new hre.ChainlinkPriceFeedConfig(this.hre);
+await chainlinkConfig.initChainlinkPriceFeedConfig("ETH/USD", "Mainnet");
+const prevPrice = await chainlinkConfig.getPrice();
+console.log(`prev price is ${prevPrice}`);
+await chainlinkConfig.setPrice("555");
+const nextPrice = await chainlinkConfig.getPrice();
+console.log(`next price is ${nextPrice}`);
+```
