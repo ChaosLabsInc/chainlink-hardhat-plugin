@@ -1,4 +1,4 @@
-![Chaos Labs - Chainlink Collab](https://github.com/ChaosLabsInc/chaos-labs-chainlink/blob/master/img/ChaosLabsChainlink.jpg)
+![Chaos Labs - Chainlink Collab](https://github.com/ChaosLabsInc/chaos-labs-chainlink/blob/master/img/ChaosLabsChainlinkHardhatPlugin.jpg)
 
 This repository hosts a CLI utitlity for mocking Chainlink Oracle prices in a local hardhat mainnet fork testing environment. Navigate to our [Quickstart](#quickstart) section to get the repo up and running.
 
@@ -30,47 +30,31 @@ Oracle manipulation is an additional attack vector. With this method, malicious 
 
 With the ability to manipulate Chainlink Oracle return values, simulating such scenarios in your local development environment is possible.
 
-## <a name="quickstart"></a> Prerequisites
+## Installation
 
-Our command-line tool is written in Typescript. Typescript introduces type safety for Javascript. Let's install this with the following command.
+<_A step-by-step guide on how to install the plugin_>
 
-- `npm i -g ts-node`
-- Confirm `ts-node` installed correctly by running `ts-node` to run typescript (``) in a terminal window.
+```bash
+npm install @ChaosLabsInc/chainlink-hardhat-plugin
+```
 
-Next, we'll want to run a mainnet fork. We need the fork so we can have a snapshot of all deployed Oracles and their respective `AggregatorProxies`. `AggregatorProxies` are a common design pattern when using Chainlink Oracles. You can read more about them in the official Chainlink docs. We take care of managing these proxies behind the scenes, so no need to deep dive on that for now. `Hardhat` has an Alchemy integration. In order to fork mainnet you need an API key, so navigate to the alchemy site and sign up for one.
+Import the plugin in your `hardhat.config.js`:
 
-- Alchemy API key for mainnet fork access: [Get one here](https://www.alchemy.com/).
+```js
+require("chainlink-hardhat-plugin");
+```
 
-## <a name="quickstart"></a> QuickStart
+Or if you are using TypeScript, in your `hardhat.config.ts`:
 
-5. **In a separate terminal window (spawn a new window in iTerm with cmd+D)** run: `npx hardhat node --fork https://eth-mainnet.alchemyapi.io/v2/<YOUR_ALCHEMY_KEY>` - Spinning a mainnet fork locally.
-6. `npm run start`
+```ts
+import "chainlink-hardhat-plugin";
+```
 
-After running the quickstart you should have the following: 2 terminals, 1 running an alchemy mainnet fork, another running the cli-tool and it should look like this:
+## Usage
 
-![Setup screenshot](https://github.com/ChaosLabsInc/chaos-labs-chainlink/blob/master/img/TerminalSetup.png)
+<_A description of how to use this plugin. How to use the tasks if there are any, etc._>
 
-## Recommended Usage
+There are no additional steps you need to take for this plugin to work.
 
-## Example Flow
-
-1. Select a price feed to configure / mock (ETH/USD, SNX/DAI etc...)
-
-2. Select a mock function which will determine the Chainlink Aggregator Proxy return values
-
-3. Set Initial value of Chainlink Oracle in the context of the simulation
-
-4. Select the price delta in each tick and tick size (how often (in blocks) should the price update):
-
-5. Deploy 🤝 💥
-
-![Example Flow](https://github.com/ChaosLabsInc/chaos-labs-chainlink/blob/master/img/ExampleFlow.png)
-
-## PR Requests
-
-Before submitting a PR please run the test suite with `npm run test`.
-
-![Test run](https://github.com/ChaosLabsInc/chaos-labs-chainlink/blob/master/img/RunTests.png)
-
-- Ganache support
-- CLI improvements. Have an idea to make this repo more user friendly? Let us know, or better yet, make a pull request :)
+Install it and access ethers through the Hardhat Runtime Environment anywhere
+you need it (tasks, scripts, tests, etc).
