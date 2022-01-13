@@ -34,7 +34,7 @@ export class ChainlinkPriceFeedConfig {
     );
     this.mockerContract = await this.deployMockerContract();
     this.currentAggregatorContractAddress = this.mockerContract.address;
-    return "Initializing Chainlink plugin runtime...";
+    return this;
   }
 
   private async deployMockerContract(): Promise<Contract> {
