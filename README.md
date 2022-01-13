@@ -1,6 +1,12 @@
 ![Chaos Labs - Chainlink Collab](https://github.com/ChaosLabsInc/chainlink-hardhat-plugin/blob/main/img/ChaosLabsChainlinkHardhatPlugin.jpg)
 
-This repository hosts a CLI utitlity for mocking Chainlink Oracle prices in a local hardhat mainnet fork testing environment. Navigate to our [Quickstart](#quickstart) section to get the repo up and running.
+This repository hosts a hardhat plugin for configuring Chainlink Oracle prices in a local hardhat mainnet fork testing environment. The plugin fetches all Mainnet Chainlink Oracle addresses when invoked and makes them accessible for price modification. The only thing the user should supply is the token pair ticker. For example, the user can supply the following tickers:
+
+```js
+await chainlinkConfig.initChainlinkPriceFeedConfig("ETH/USD", "Mainnet");
+await chainlinkConfig.initChainlinkPriceFeedConfig("AAVE/USD", "Mainnet");
+await chainlinkConfig.initChainlinkPriceFeedConfig("ETH/BTC", "Mainnet");
+```
 
 For a full deep dive to the project architecture please visit the [Chaos Labs blog](https://chaoslabs.xyz/blog).
 
@@ -61,3 +67,13 @@ await chainlinkConfig.setPrice("555");
 const nextPrice = await chainlinkConfig.getPrice();
 console.log(`next price is ${nextPrice}`);
 ```
+
+## Run Tests
+
+Run tests with the following command:
+
+```bash
+npm run build && npm run test
+```
+
+![Tests output](https://github.com/ChaosLabsInc/chainlink-hardhat-plugin/blob/main/img/RunTests.png)
