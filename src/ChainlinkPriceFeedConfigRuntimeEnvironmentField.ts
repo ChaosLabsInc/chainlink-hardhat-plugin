@@ -1,5 +1,6 @@
 import { ethers, Contract } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { BigNumber } from "@ethersproject/bignumber";
 import ChainlinkDataFeeds from "./chainlink-config/chainlink-data-feeds";
 import {
   ChainlinkPriceFeedApiResponse,
@@ -7,14 +8,9 @@ import {
 } from "./chainlink-config/chainlink-data-types";
 import { DeploySetterContract } from "./chainlink-config/contracts";
 
-const enum PriceFunction {
-  ASCENDING = "asecnding",
-  DESCENDING = "descending",
-  VOLATILE = "volatile",
-}
 interface PriceConfig {
   delta: number;
-  priceFunction: PriceFunction;
+  priceFunction: string;
   initialPrice: number;
 }
 
@@ -50,6 +46,14 @@ export class ChainlinkPriceFeedConfig {
     );
     this.mockerContract = await this.deployMockerContract();
     this.currentAggregatorContractAddress = this.mockerContract.address;
+    if (
+      priceConfig &&
+      ["ascending", "descending", "volatile"].includes(
+        priceConfig.priceFunction
+      ) === false
+    ) {
+      throw new Error("Invalid price function provided");
+    }
     this.priceConfig = priceConfig;
     return this;
   }
@@ -93,7 +97,7 @@ export class ChainlinkPriceFeedConfig {
     };
   }
 
-  public async getPrice(): Promise<number> {
+  public async getPrice(): Promise<BigNumber> {
     if (this.mockerContract === undefined) {
       throw new Error("mocker contract is not defined");
     }
@@ -101,21 +105,22 @@ export class ChainlinkPriceFeedConfig {
     return round.answer;
   }
 
-  private async nextPrice(): Promise<void> {
+  public async nextPrice(): Promise<void> {
     if (this.priceConfig === undefined) {
-      throw new Error("Configuration not supplied");
+      throw new Error("Configuration not provided");
     }
+
     this.steps++;
     switch (this.priceConfig.priceFunction) {
-      case PriceFunction.ASCENDING:
+      case "asecnding":
         await this.setPrice(
           this.priceConfig.initialPrice + this.steps * this.priceConfig.delta
         );
-      case PriceFunction.DESCENDING:
+      case "descending":
         await this.setPrice(
           this.priceConfig.initialPrice - this.steps * this.priceConfig.delta
         );
-      case PriceFunction.VOLATILE:
+      case "volatile":
         await this.setPrice(
           this.priceConfig.initialPrice +
             -1 * (this.steps * this.priceConfig.delta)
