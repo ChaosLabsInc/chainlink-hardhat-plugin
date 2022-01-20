@@ -114,7 +114,7 @@ describe("Use price config", function () {
 describe("Use price config", function () {
   const ticker = "ETH/USD";
   this.timeout(30000),
-    describe("Ascending - Initial price is set", function () {
+    describe("Initial price is set via price config", function () {
       it(`Set price for non existent ${ticker}`, async function () {
         const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
         await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
@@ -144,6 +144,49 @@ describe("Use price config", function () {
         await chainlinkConfig.nextPrice();
         const nextPrice = await chainlinkConfig.getPrice();
         assert.equal(nextPrice.toNumber(), 10);
+      });
+    });
+});
+
+describe("Use price config", function () {
+  const ticker = "ETH/USD";
+  this.timeout(30000),
+    describe("Descending - Iterator works", function () {
+      it(`Set price for non existent ${ticker}`, async function () {
+        const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
+        await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
+          delta: 10,
+          priceFunction: "descending",
+          initialPrice: 0,
+        });
+        const initPrice = await chainlinkConfig.getPrice();
+        assert.equal(initPrice.toNumber(), 0);
+        await chainlinkConfig.nextPrice();
+        const nextPrice = await chainlinkConfig.getPrice();
+        assert.equal(nextPrice.toNumber(), -10);
+      });
+    });
+});
+
+describe("Use price config", function () {
+  const ticker = "ETH/USD";
+  this.timeout(30000),
+    describe("Volatile - Iterator works", function () {
+      it(`Set price for non existent ${ticker}`, async function () {
+        const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
+        await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
+          delta: 10,
+          priceFunction: "descending",
+          initialPrice: 0,
+        });
+        let price = await chainlinkConfig.getPrice();
+        assert.equal(price.toNumber(), 0);
+        await chainlinkConfig.nextPrice();
+        price = await chainlinkConfig.getPrice();
+        assert.equal(price.toNumber(), -10);
+        await chainlinkConfig.nextPrice();
+        price = await chainlinkConfig.getPrice();
+        assert.equal(price.toNumber(), 20);
       });
     });
 });
