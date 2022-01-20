@@ -1,11 +1,11 @@
 import { ethers, Contract } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import ChainlinkDataFeeds from "./chainlink-data-feeds";
+import ChainlinkDataFeeds from "./chainlink-config/chainlink-data-feeds";
 import {
   ChainlinkPriceFeedApiResponse,
   EthereumNetworkType,
-} from "./chainlink-data-types";
-import { DeploySetterContract } from "./contracts";
+} from "./chainlink-config/chainlink-data-types";
+import { DeploySetterContract } from "./chainlink-config/contracts";
 
 export class ChainlinkPriceFeedConfig {
   currentEthereumNetwork?: "Mainnet" | "Kovan" | "Rinkeby";
@@ -15,6 +15,7 @@ export class ChainlinkPriceFeedConfig {
   currentAggregatorContractAddress?: string;
   mockerContract?: Contract;
   provider: ethers.providers.Provider;
+  priceData: any;
   hre: HardhatRuntimeEnvironment;
 
   constructor(hre: HardhatRuntimeEnvironment, url?: string) {
@@ -24,7 +25,8 @@ export class ChainlinkPriceFeedConfig {
 
   public async initChainlinkPriceFeedConfig(
     ticker: string,
-    network: EthereumNetworkType = "Mainnet"
+    network: EthereumNetworkType = "Mainnet",
+    priceData?: any
   ) {
     this.currentTicker = ticker.replace(/\s+/g, "");
     this.currentEthereumNetwork = network;
@@ -76,6 +78,14 @@ export class ChainlinkPriceFeedConfig {
     };
   }
 
+  public async getPrice(): Promise<any> {
+    if (this.mockerContract === undefined) {
+      throw new Error("mocker contract is not defined");
+    }
+    const round = await this.mockerContract.latestRoundData();
+    return round.answer;
+  }
+
   public async setPrice(price: string): Promise<string> {
     if (this.mockerContract === undefined) {
       throw new Error("mocker contract is not defined");
@@ -84,11 +94,5 @@ export class ChainlinkPriceFeedConfig {
     return `Writing price: ${price} to oracle`;
   }
 
-  public async getPrice(): Promise<any> {
-    if (this.mockerContract === undefined) {
-      throw new Error("mocker contract is not defined");
-    }
-    const round = await this.mockerContract.latestRoundData();
-    return round.answer;
-  }
+  public async nextPrice(): Promise<any> {}
 }
