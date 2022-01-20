@@ -36,7 +36,7 @@ describe("Set price of ETH/USD", function () {
           "Mainnet"
         );
         const prevPrice = await chainlinkConfig.getPrice();
-        await chainlinkConfig.setPrice("555");
+        await chainlinkConfig.setPrice(555);
         const nextPrice = await chainlinkConfig.getPrice();
         assert.notEqual(prevPrice, nextPrice);
       });
@@ -53,7 +53,7 @@ describe("Set price of AAVE/USD", function () {
           "Mainnet"
         );
         const prevPrice = await chainlinkConfig.getPrice();
-        await chainlinkConfig.setPrice("555");
+        await chainlinkConfig.setPrice(555);
         const nextPrice = await chainlinkConfig.getPrice();
         assert.notEqual(prevPrice, nextPrice);
       });

@@ -7,6 +7,17 @@ import {
 } from "./chainlink-config/chainlink-data-types";
 import { DeploySetterContract } from "./chainlink-config/contracts";
 
+const enum PriceFunction {
+  ASCENDING = "asecnding",
+  DESCENDING = "descending",
+  VOLATILE = "volatile",
+}
+interface PriceConfig {
+  delta: number;
+  priceFunction: PriceFunction;
+  initialPrice: number;
+}
+
 export class ChainlinkPriceFeedConfig {
   currentEthereumNetwork?: "Mainnet" | "Kovan" | "Rinkeby";
   chainlinkPriceFeeds?: ChainlinkPriceFeedApiResponse;
@@ -17,16 +28,19 @@ export class ChainlinkPriceFeedConfig {
   provider: ethers.providers.Provider;
   priceData: any;
   hre: HardhatRuntimeEnvironment;
+  priceConfig?: PriceConfig;
+  steps: number;
 
   constructor(hre: HardhatRuntimeEnvironment, url?: string) {
     this.hre = hre;
     this.provider = ethers.getDefaultProvider(url);
+    this.steps = 0;
   }
 
   public async initChainlinkPriceFeedConfig(
     ticker: string,
     network: EthereumNetworkType = "Mainnet",
-    priceData?: any
+    priceConfig?: PriceConfig
   ) {
     this.currentTicker = ticker.replace(/\s+/g, "");
     this.currentEthereumNetwork = network;
@@ -36,6 +50,7 @@ export class ChainlinkPriceFeedConfig {
     );
     this.mockerContract = await this.deployMockerContract();
     this.currentAggregatorContractAddress = this.mockerContract.address;
+    this.priceConfig = priceConfig;
     return this;
   }
 
@@ -78,7 +93,7 @@ export class ChainlinkPriceFeedConfig {
     };
   }
 
-  public async getPrice(): Promise<any> {
+  public async getPrice(): Promise<number> {
     if (this.mockerContract === undefined) {
       throw new Error("mocker contract is not defined");
     }
@@ -86,13 +101,33 @@ export class ChainlinkPriceFeedConfig {
     return round.answer;
   }
 
-  public async setPrice(price: string): Promise<string> {
+  private async nextPrice(): Promise<void> {
+    if (this.priceConfig === undefined) {
+      throw new Error("Configuration not supplied");
+    }
+    this.steps++;
+    switch (this.priceConfig.priceFunction) {
+      case PriceFunction.ASCENDING:
+        await this.setPrice(
+          this.priceConfig.initialPrice + this.steps * this.priceConfig.delta
+        );
+      case PriceFunction.DESCENDING:
+        await this.setPrice(
+          this.priceConfig.initialPrice - this.steps * this.priceConfig.delta
+        );
+      case PriceFunction.VOLATILE:
+        await this.setPrice(
+          this.priceConfig.initialPrice +
+            -1 * (this.steps * this.priceConfig.delta)
+        );
+    }
+  }
+
+  public async setPrice(price: number): Promise<string> {
     if (this.mockerContract === undefined) {
       throw new Error("mocker contract is not defined");
     }
     await this.mockerContract.setAnswer(price);
     return `Writing price: ${price} to oracle`;
   }
-
-  public async nextPrice(): Promise<any> {}
 }
