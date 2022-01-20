@@ -123,11 +123,10 @@ export class ChainlinkPriceFeedConfig {
     }
   }
 
-  public async setPrice(price: number): Promise<string> {
+  public async setPrice(price: number): Promise<void> {
     if (this.mockerContract === undefined) {
       throw new Error("mocker contract is not defined");
     }
     await this.mockerContract.setAnswer(price);
-    return `Writing price: ${price} to oracle`;
   }
 }
