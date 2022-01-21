@@ -115,18 +115,25 @@ export class ChainlinkPriceFeedConfig {
 
     this.steps++;
     switch (this.priceConfig.priceFunction) {
-      case "asecnding":
+      case "ascending":
         await this.setPrice(
           this.priceConfig.initialPrice + this.steps * this.priceConfig.delta
         );
+        break;
       case "descending":
         await this.setPrice(
           this.priceConfig.initialPrice - this.steps * this.priceConfig.delta
         );
+        break;
       case "volatile":
         await this.setPrice(
           this.priceConfig.initialPrice +
             this.volatileDirection() * (this.steps * this.priceConfig.delta)
+        );
+        break;
+      default:
+        throw new Error(
+          `Configuration price funciton invalid: [${this.priceConfig.priceFunction}]`
         );
     }
   }
