@@ -8,6 +8,8 @@ import {
 } from "./chainlink-config/chainlink-data-types";
 import { DeploySetterContract } from "./chainlink-config/contracts";
 
+const SUPPORTED_PRICE_FUNCTIONS = ["ascending", "descending", "volatile"];
+
 interface PriceConfig {
   delta: number;
   priceFunction: string;
@@ -48,13 +50,14 @@ export class ChainlinkPriceFeedConfig {
     this.currentAggregatorContractAddress = this.mockerContract.address;
     if (
       priceConfig &&
-      ["ascending", "descending", "volatile"].includes(
-        priceConfig.priceFunction
-      ) === false
+      SUPPORTED_PRICE_FUNCTIONS.includes(priceConfig.priceFunction) === false
     ) {
       throw new Error("Invalid price function provided");
     }
     this.priceConfig = priceConfig;
+    if (this.priceConfig) {
+      this.setPrice(this.priceConfig.initialPrice);
+    }
     return this;
   }
 
@@ -123,9 +126,13 @@ export class ChainlinkPriceFeedConfig {
       case "volatile":
         await this.setPrice(
           this.priceConfig.initialPrice +
-            -1 * (this.steps * this.priceConfig.delta)
+            this.volatileDirection() * (this.steps * this.priceConfig.delta)
         );
     }
+  }
+
+  private volatileDirection(): number {
+    return this.steps % 2 ? -1 : 1;
   }
 
   public async setPrice(price: number): Promise<void> {
