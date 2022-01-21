@@ -38,6 +38,7 @@ describe("Check typing of ChainlinkPriceFeedConfig", function () {
 });
 
 describe("Set price of 1INCH/USD", function () {
+  const ticker = "1INCH/USD";
   this.timeout(30000),
     describe("Check Oracle Price Setter", function () {
       it("Set price for 1INCH/USD", async function () {
@@ -46,9 +47,9 @@ describe("Set price of 1INCH/USD", function () {
           "1INCH/USD",
           "Mainnet"
         );
-        const prevPrice = await chainlinkConfig.getPrice();
-        await chainlinkConfig.setPrice(555);
-        const nextPrice = await chainlinkConfig.getPrice();
+        const prevPrice = await chainlinkConfig.getPrice(ticker);
+        await chainlinkConfig.setPrice(ticker, 555);
+        const nextPrice = await chainlinkConfig.getPrice(ticker);
         // console.log(prevPrice, nextPrice);
         assert.notEqual(prevPrice, nextPrice);
       });
@@ -56,6 +57,7 @@ describe("Set price of 1INCH/USD", function () {
 });
 
 describe("Set price of AAVE/USD", function () {
+  const ticker = "AAVE/USD";
   this.timeout(30000),
     describe("Check Oracle Price Setter", function () {
       it("Set price for AAVE/USD", async function () {
@@ -64,16 +66,16 @@ describe("Set price of AAVE/USD", function () {
           "AAVE/USD",
           "Mainnet"
         );
-        const prevPrice = await chainlinkConfig.getPrice();
-        await chainlinkConfig.setPrice(555);
-        const nextPrice = await chainlinkConfig.getPrice();
+        const prevPrice = await chainlinkConfig.getPrice(ticker);
+        await chainlinkConfig.setPrice(ticker, 555);
+        const nextPrice = await chainlinkConfig.getPrice(ticker);
         assert.notEqual(prevPrice, nextPrice);
       });
     });
 });
 
 describe("Set price of non existent ticker ABC/USD", function () {
-  const ticker = TICKERS[0];
+  const ticker = "ABC/USD";
   this.timeout(30000),
     describe("Check Oracle Price Setter", function () {
       it(`Set price for non existent ${ticker}`, async function () {
@@ -133,7 +135,7 @@ describe("Use price config", function () {
           priceFunction: "ascending",
           initialPrice: 0,
         });
-        const price = await chainlinkConfig.getPrice();
+        const price = await chainlinkConfig.getPrice(ticker);
         assert.equal(price.toNumber(), 0);
       });
     });
@@ -150,10 +152,10 @@ describe("Use price config", function () {
           priceFunction: "ascending",
           initialPrice: 0,
         });
-        const initPrice = await chainlinkConfig.getPrice();
+        const initPrice = await chainlinkConfig.getPrice(ticker);
         assert.equal(initPrice.toNumber(), 0);
-        await chainlinkConfig.nextPrice();
-        const nextPrice = await chainlinkConfig.getPrice();
+        await chainlinkConfig.nextPrice(ticker);
+        const nextPrice = await chainlinkConfig.getPrice(ticker);
         assert.equal(nextPrice.toNumber(), 10);
       });
     });
@@ -170,10 +172,10 @@ describe("Use price config", function () {
           priceFunction: "descending",
           initialPrice: 0,
         });
-        const initPrice = await chainlinkConfig.getPrice();
+        const initPrice = await chainlinkConfig.getPrice(ticker);
         assert.equal(initPrice.toNumber(), 0);
-        await chainlinkConfig.nextPrice();
-        const nextPrice = await chainlinkConfig.getPrice();
+        await chainlinkConfig.nextPrice(ticker);
+        const nextPrice = await chainlinkConfig.getPrice(ticker);
         assert.equal(nextPrice.toNumber(), -10);
       });
     });
@@ -190,13 +192,13 @@ describe("Use price config", function () {
           priceFunction: "volatile",
           initialPrice: 0,
         });
-        let price = await chainlinkConfig.getPrice();
+        let price = await chainlinkConfig.getPrice(ticker);
         assert.equal(price.toNumber(), 0);
-        await chainlinkConfig.nextPrice();
-        price = await chainlinkConfig.getPrice();
+        await chainlinkConfig.nextPrice(ticker);
+        price = await chainlinkConfig.getPrice(ticker);
         assert.equal(price.toNumber(), -10);
-        await chainlinkConfig.nextPrice();
-        price = await chainlinkConfig.getPrice();
+        await chainlinkConfig.nextPrice(ticker);
+        price = await chainlinkConfig.getPrice(ticker);
         assert.equal(price.toNumber(), 20);
       });
     });
