@@ -12,7 +12,7 @@ await chainlinkConfig.initChainlinkPriceFeedConfig("AAVE/USD", "Mainnet");
 await chainlinkConfig.initChainlinkPriceFeedConfig("ETH/BTC", "Mainnet");
 ```
 
-<a name="explicitusage"></a> More on this here!
+[More on this here!](https://github.com/ChaosLabsInc/chainlink-hardhat-plugin#-usage---set-prices-explicity)
 
 ### Set Prices trends with the following config
 
@@ -26,7 +26,7 @@ await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
 
 Grab a config via the [Chainlink portal!](https://chainlink.chaoslabs.xyz/oracle-configuration/chainlink)
 
-<a name="configusage"></a> More on this here!
+[More on this here!](https://github.com/ChaosLabsInc/chainlink-hardhat-plugin#-usage---set-prices-via-configuration)
 
 ## Why is Mocking Oracle values useful in testing?
 
