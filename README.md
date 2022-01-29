@@ -2,7 +2,9 @@
 
 ## TLDR
 
-This repository hosts a hardhat plugin for configuring Chainlink Oracle prices in a local hardhat mainnet fork testing environment. The plugin fetches all Mainnet Chainlink Oracle addresses when invoked and makes them accessible for price modification. The only thing the user should supply is the token pair ticker. For example, the user can supply the following tickers:
+- This repository hosts a hardhat plugin for configuring Chainlink Oracle prices in a local hardhat mainnet fork testing environment.
+- The plugin fetches all Mainnet Chainlink Oracle addresses when invoked and makes them accessible for price modification.
+- The only thing the user should supply is the token pair ticker or a price config. Let's explore the different options.
 
 ### Set Prices Explicity with the following init config
 
@@ -95,6 +97,8 @@ const nextPrice = await chainlinkConfig.getPrice(); // 555
 ```
 
 ## <a name="configusage"></a> Usage - Set Prices via Configuration
+
+Grab a config via the [Chainlink portal!](https://chainlink.chaoslabs.xyz/oracle-configuration/chainlink)
 
 Some test cases require testing trends in pricing. For example, we may want to test examples in which _TokenA_ is decreasing in a monotonic fashion. For this use case we can grab a Chainlink Configuration object and pass it to the `initChainlinkPriceFeedConfig` initializer.
 
