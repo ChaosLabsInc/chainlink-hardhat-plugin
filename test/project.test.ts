@@ -4,6 +4,17 @@ import { ChainlinkPriceFeedConfig } from "../src/ChainlinkPriceFeedConfigRuntime
 
 import { useEnvironment } from "./helpers";
 
+const TICKERS = [
+  "BTT/USD",
+  "BUSD/ETH",
+  "ETH/USD",
+  "ETH/BTC",
+  "BUSD/USD",
+  "COMP/ETH",
+  "COMP/USD",
+  "ETH/BTC",
+];
+
 describe("Check typing of ChainlinkPriceFeedConfig", function () {
   this.timeout(30000),
     describe("Hardhat Runtime Environment extension", function () {
@@ -18,7 +29,7 @@ describe("Check typing of ChainlinkPriceFeedConfig", function () {
 
       it("ChainlinkPriceFeedConfig initializer should return instance of ChainlinkPriceFeedConfig", async function () {
         const priceFeedConfig = await this.hre.chainlinkPriceFeedConfig.initChainlinkPriceFeedConfig(
-          "ETH/USD",
+          "1INCH/ETH",
           "Mainnet"
         );
         assert.instanceOf(priceFeedConfig, ChainlinkPriceFeedConfig);
@@ -26,18 +37,19 @@ describe("Check typing of ChainlinkPriceFeedConfig", function () {
     });
 });
 
-describe("Set price of ETH/USD", function () {
+describe("Set price of 1INCH/USD", function () {
+  const ticker = "1INCH/USD";
   this.timeout(30000),
     describe("Check Oracle Price Setter", function () {
-      it("Set price for ETH/USD", async function () {
+      it("Set price for 1INCH/USD", async function () {
         const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
         await chainlinkConfig.initChainlinkPriceFeedConfig(
-          "ETH/USD",
+          "1INCH/USD",
           "Mainnet"
         );
-        const prevPrice = await chainlinkConfig.getPrice();
-        await chainlinkConfig.setPrice(555);
-        const nextPrice = await chainlinkConfig.getPrice();
+        const prevPrice = await chainlinkConfig.getPrice(ticker);
+        await chainlinkConfig.setPrice(ticker, 555);
+        const nextPrice = await chainlinkConfig.getPrice(ticker);
         // console.log(prevPrice, nextPrice);
         assert.notEqual(prevPrice, nextPrice);
       });
@@ -45,6 +57,7 @@ describe("Set price of ETH/USD", function () {
 });
 
 describe("Set price of AAVE/USD", function () {
+  const ticker = "AAVE/USD";
   this.timeout(30000),
     describe("Check Oracle Price Setter", function () {
       it("Set price for AAVE/USD", async function () {
@@ -53,9 +66,9 @@ describe("Set price of AAVE/USD", function () {
           "AAVE/USD",
           "Mainnet"
         );
-        const prevPrice = await chainlinkConfig.getPrice();
-        await chainlinkConfig.setPrice(555);
-        const nextPrice = await chainlinkConfig.getPrice();
+        const prevPrice = await chainlinkConfig.getPrice(ticker);
+        await chainlinkConfig.setPrice(ticker, 555);
+        const nextPrice = await chainlinkConfig.getPrice(ticker);
         assert.notEqual(prevPrice, nextPrice);
       });
     });
@@ -85,10 +98,10 @@ describe("Set price of non existent ticker ABC/USD", function () {
 });
 
 describe("Use price config", function () {
-  const ticker = "ETH/USD";
+  const ticker = TICKERS[1];
   this.timeout(30000),
     describe("Invalid Price Function", function () {
-      it(`Set price for non existent ${ticker}`, async function () {
+      it(`Set price for ${ticker}`, async function () {
         const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
         try {
           await chainlinkConfig.initChainlinkPriceFeedConfig(
@@ -112,80 +125,80 @@ describe("Use price config", function () {
 });
 
 describe("Use price config", function () {
-  const ticker = "ETH/USD";
+  const ticker = TICKERS[2];
   this.timeout(30000),
     describe("Initial price is set via price config", function () {
-      it(`Set price for non existent ${ticker}`, async function () {
+      it(`Set price for ${ticker}`, async function () {
         const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
         await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
           delta: 10,
           priceFunction: "ascending",
           initialPrice: 0,
         });
-        const price = await chainlinkConfig.getPrice();
+        const price = await chainlinkConfig.getPrice(ticker);
         assert.equal(price.toNumber(), 0);
       });
     });
 });
 
 describe("Use price config", function () {
-  const ticker = "ETH/USD";
+  const ticker = TICKERS[3];
   this.timeout(30000),
     describe("Ascending - Iterator works", function () {
-      it(`Set price for non existent ${ticker}`, async function () {
+      it(`Set price for ${ticker}`, async function () {
         const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
         await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
           delta: 10,
           priceFunction: "ascending",
           initialPrice: 0,
         });
-        const initPrice = await chainlinkConfig.getPrice();
+        const initPrice = await chainlinkConfig.getPrice(ticker);
         assert.equal(initPrice.toNumber(), 0);
-        await chainlinkConfig.nextPrice();
-        const nextPrice = await chainlinkConfig.getPrice();
+        await chainlinkConfig.nextPrice(ticker);
+        const nextPrice = await chainlinkConfig.getPrice(ticker);
         assert.equal(nextPrice.toNumber(), 10);
       });
     });
 });
 
 describe("Use price config", function () {
-  const ticker = "ETH/USD";
+  const ticker = TICKERS[4];
   this.timeout(30000),
     describe("Descending - Iterator works", function () {
-      it(`Set price for non existent ${ticker}`, async function () {
+      it(`Set price for ${ticker}`, async function () {
         const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
         await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
           delta: 10,
           priceFunction: "descending",
           initialPrice: 0,
         });
-        const initPrice = await chainlinkConfig.getPrice();
+        const initPrice = await chainlinkConfig.getPrice(ticker);
         assert.equal(initPrice.toNumber(), 0);
-        await chainlinkConfig.nextPrice();
-        const nextPrice = await chainlinkConfig.getPrice();
+        await chainlinkConfig.nextPrice(ticker);
+        const nextPrice = await chainlinkConfig.getPrice(ticker);
         assert.equal(nextPrice.toNumber(), -10);
       });
     });
 });
 
 describe("Use price config", function () {
-  const ticker = "ETH/USD";
+  const ticker = TICKERS[5];
   this.timeout(30000),
     describe("Volatile - Iterator works", function () {
-      it(`Set price for non existent ${ticker}`, async function () {
+      it(`Set price for ${ticker}`, async function () {
         const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
         await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
           delta: 10,
-          priceFunction: "descending",
+          priceFunction: "volatile",
           initialPrice: 0,
         });
-        let price = await chainlinkConfig.getPrice();
+        let price = await chainlinkConfig.getPrice(ticker);
         assert.equal(price.toNumber(), 0);
-        await chainlinkConfig.nextPrice();
-        price = await chainlinkConfig.getPrice();
+        await chainlinkConfig.nextPrice(ticker);
+        price = await chainlinkConfig.getPrice(ticker);
         assert.equal(price.toNumber(), -10);
-        await chainlinkConfig.nextPrice();
-        price = await chainlinkConfig.getPrice();
+        await chainlinkConfig.nextPrice(ticker);
+        price = await chainlinkConfig.getPrice(ticker);
         assert.equal(price.toNumber(), 20);
       });
     });

@@ -8,66 +8,80 @@ import {
 } from "./chainlink-config/chainlink-data-types";
 import { DeploySetterContract } from "./chainlink-config/contracts";
 
-interface PriceConfig {
+const SUPPORTED_PRICE_FUNCTIONS = ["ascending", "descending", "volatile"];
+
+interface InputPriceConfig {
   delta: number;
   priceFunction: string;
   initialPrice: number;
 }
 
+interface TickerConfig {
+  ticker: string;
+  proxyAddress: string;
+  aggregatorContractAddress: string;
+  mockerContract: Contract;
+  priceConfig?: InputPriceConfig;
+  steps: number;
+}
+
 export class ChainlinkPriceFeedConfig {
   currentEthereumNetwork?: "Mainnet" | "Kovan" | "Rinkeby";
   chainlinkPriceFeeds?: ChainlinkPriceFeedApiResponse;
-  currentTicker?: string;
-  currentProxyAddress?: string;
-  currentAggregatorContractAddress?: string;
-  mockerContract?: Contract;
+  tickerConfigs: Map<string, TickerConfig>;
   provider: ethers.providers.Provider;
-  priceData: any;
   hre: HardhatRuntimeEnvironment;
-  priceConfig?: PriceConfig;
-  steps: number;
 
   constructor(hre: HardhatRuntimeEnvironment, url?: string) {
     this.hre = hre;
     this.provider = ethers.getDefaultProvider(url);
-    this.steps = 0;
+    this.tickerConfigs = new Map<string, TickerConfig>();
   }
 
   public async initChainlinkPriceFeedConfig(
     ticker: string,
     network: EthereumNetworkType = "Mainnet",
-    priceConfig?: PriceConfig
+    priceConfig?: InputPriceConfig
   ) {
-    this.currentTicker = ticker.replace(/\s+/g, "");
-    this.currentEthereumNetwork = network;
-    this.chainlinkPriceFeeds = await ChainlinkDataFeeds.getAllPriceFeeds();
-    this.currentProxyAddress = await this.convertTickerToProxyAddress(
-      this.currentTicker
-    );
-    this.mockerContract = await this.deployMockerContract();
-    this.currentAggregatorContractAddress = this.mockerContract.address;
     if (
       priceConfig &&
-      ["ascending", "descending", "volatile"].includes(
-        priceConfig.priceFunction
-      ) === false
+      SUPPORTED_PRICE_FUNCTIONS.includes(priceConfig.priceFunction) === false
     ) {
       throw new Error("Invalid price function provided");
     }
-    this.priceConfig = priceConfig;
+    this.chainlinkPriceFeeds = await ChainlinkDataFeeds.getAllPriceFeeds();
+    this.currentEthereumNetwork = network;
+    const parsedTicker = this.parseTicker(ticker);
+    const proxyAddress = await this.convertTickerToProxyAddress(parsedTicker);
+    const mockerContract = await this.deployMockerContract(proxyAddress);
+    this.tickerConfigs.set(parsedTicker, {
+      ticker: parsedTicker,
+      proxyAddress: proxyAddress,
+      aggregatorContractAddress: mockerContract.address,
+      mockerContract: mockerContract,
+      priceConfig: priceConfig,
+      steps: 0,
+    });
+    if (priceConfig) {
+      this.setPrice(ticker, priceConfig.initialPrice);
+    }
     return this;
   }
 
-  private async deployMockerContract(): Promise<Contract> {
-    if (this.currentProxyAddress === undefined) {
-      throw new Error("current proxy address is not defined");
-    }
+  private parseTicker(ticker: string): string {
+    return ticker.replace(/\s+/g, "");
+  }
 
-    return await DeploySetterContract(
-      this.currentProxyAddress,
-      this.hre,
-      this.provider
-    );
+  private getTickerConfig(ticker: string): TickerConfig {
+    const config = this.tickerConfigs.get(this.parseTicker(ticker));
+    if (config === undefined) {
+      throw new Error("Ticket not intialized");
+    }
+    return config;
+  }
+
+  private async deployMockerContract(proxyAddress: string): Promise<Contract> {
+    return await DeploySetterContract(proxyAddress, this.hre, this.provider);
   }
 
   private async convertTickerToProxyAddress(ticker: string) {
@@ -88,50 +102,55 @@ export class ChainlinkPriceFeedConfig {
     return foundProxy.proxy;
   }
 
-  public getChainlinkConfig() {
-    return {
-      currentEthereumNetwork: this.currentEthereumNetwork,
-      currentTicker: this.currentTicker,
-      chainlinkPriceFeeds: this.chainlinkPriceFeeds,
-      currentProxyAddress: this.currentProxyAddress,
-    };
-  }
-
-  public async getPrice(): Promise<BigNumber> {
-    if (this.mockerContract === undefined) {
-      throw new Error("mocker contract is not defined");
-    }
-    const round = await this.mockerContract.latestRoundData();
+  public async getPrice(ticker: string): Promise<BigNumber> {
+    const config = this.getTickerConfig(ticker);
+    const round = await config.mockerContract.latestRoundData();
     return round.answer;
   }
 
-  public async nextPrice(): Promise<void> {
-    if (this.priceConfig === undefined) {
+  public async nextPrice(ticker: string): Promise<void> {
+    const config = this.getTickerConfig(ticker);
+    if (config.priceConfig === undefined) {
       throw new Error("Configuration not provided");
     }
 
-    this.steps++;
-    switch (this.priceConfig.priceFunction) {
-      case "asecnding":
+    config.steps++;
+    switch (config.priceConfig.priceFunction) {
+      case "ascending":
         await this.setPrice(
-          this.priceConfig.initialPrice + this.steps * this.priceConfig.delta
+          ticker,
+          config.priceConfig.initialPrice +
+            config.steps * config.priceConfig.delta
         );
+        break;
       case "descending":
         await this.setPrice(
-          this.priceConfig.initialPrice - this.steps * this.priceConfig.delta
+          ticker,
+          config.priceConfig.initialPrice -
+            config.steps * config.priceConfig.delta
         );
+        break;
       case "volatile":
         await this.setPrice(
-          this.priceConfig.initialPrice +
-            -1 * (this.steps * this.priceConfig.delta)
+          ticker,
+          config.priceConfig.initialPrice +
+            this.volatileDirection(config) *
+              (config.steps * config.priceConfig.delta)
+        );
+        break;
+      default:
+        throw new Error(
+          `Configuration price funciton invalid: [${config.priceConfig.priceFunction}]`
         );
     }
   }
 
-  public async setPrice(price: number): Promise<void> {
-    if (this.mockerContract === undefined) {
-      throw new Error("mocker contract is not defined");
-    }
-    await this.mockerContract.setAnswer(price);
+  private volatileDirection(config: TickerConfig): number {
+    return config.steps % 2 ? -1 : 1;
+  }
+
+  public async setPrice(ticker: string, price: number): Promise<void> {
+    const config = this.getTickerConfig(ticker);
+    await config.mockerContract.setAnswer(price);
   }
 }
