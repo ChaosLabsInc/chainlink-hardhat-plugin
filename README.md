@@ -36,13 +36,21 @@ Oracle manipulation is an additional attack vector. With this method, malicious 
 
 With the ability to manipulate Chainlink Oracle return values, simulating such scenarios in your local development environment is possible.
 
+## Prerequisites
+
+We're going to need an instance of a `hardhat` mainnet fork running in a separate terminal window. For a quickstart, follow the installation steps in our [Chaos Labs demo repo](https://github.com/ChaosLabsInc/demo-plugins-repo).
+
 ## Installation
 
 <_A step-by-step guide on how to install the plugin_>
 
+**Step 1**
+
 ```bash
-npm install @ChaosLabsInc/chainlink-hardhat-plugin
+npm install ChaosLabsInc/chainlink-hardhat-plugin
 ```
+
+**Step 2**
 
 Import the plugin in your `hardhat.config.js`:
 
