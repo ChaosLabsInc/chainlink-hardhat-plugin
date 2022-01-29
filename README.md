@@ -12,7 +12,7 @@ await chainlinkConfig.initChainlinkPriceFeedConfig("AAVE/USD", "Mainnet");
 await chainlinkConfig.initChainlinkPriceFeedConfig("ETH/BTC", "Mainnet");
 ```
 
-<a name="explicitUsage">More on this here!</a>
+<a name="explicitusage">More on this here!</a>
 
 ### Set Prices trends with the following config
 
@@ -26,7 +26,7 @@ await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
 
 Grab a config via the [Chainlink portal!](https://chainlink.chaoslabs.xyz/oracle-configuration/chainlink)
 
-<a name="configUsage">More on this here!</a>
+<a name="configusage">More on this here!</a>
 
 ## Why is Mocking Oracle values useful in testing?
 
@@ -82,7 +82,7 @@ Or if you are using TypeScript, in your `hardhat.config.ts`:
 import "@chaos-labs/chainlink-hardhat-plugin";
 ```
 
-## <a name="explicitUsage"></a> Usage - Set Prices Explicity
+## <a name="explicitusage"></a> Usage - Set Prices Explicity
 
 In this example we will explicitly set the return value of a Chainlink price feed.
 
@@ -94,7 +94,7 @@ await chainlinkConfig.setPrice("555");
 const nextPrice = await chainlinkConfig.getPrice(); // 555
 ```
 
-## <a name="configUsage"></a> Usage - Set Prices via Configuration
+## <a name="configusage"></a> Usage - Set Prices via Configuration
 
 Some test cases require testing trends in pricing. For example, we may want to test examples in which _TokenA_ is decreasing in a monotonic fashion. For this use case we can grab a Chainlink Configuration object and pass it to the `initChainlinkPriceFeedConfig` initializer.
 
