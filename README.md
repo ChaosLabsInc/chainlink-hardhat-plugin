@@ -1,6 +1,10 @@
 ![Chaos Labs - Chainlink Collab](https://github.com/ChaosLabsInc/chainlink-hardhat-plugin/blob/main/img/ChaosLabsChainlinkHardhatPlugin.jpg)
 
+## TLDR
+
 This repository hosts a hardhat plugin for configuring Chainlink Oracle prices in a local hardhat mainnet fork testing environment. The plugin fetches all Mainnet Chainlink Oracle addresses when invoked and makes them accessible for price modification. The only thing the user should supply is the token pair ticker. For example, the user can supply the following tickers:
+
+### Set Prices Explicity with the following init config
 
 ```js
 await chainlinkConfig.initChainlinkPriceFeedConfig("ETH/USD", "Mainnet");
@@ -8,11 +12,27 @@ await chainlinkConfig.initChainlinkPriceFeedConfig("AAVE/USD", "Mainnet");
 await chainlinkConfig.initChainlinkPriceFeedConfig("ETH/BTC", "Mainnet");
 ```
 
-For a full deep dive to the project architecture please visit the [Chaos Labs blog](https://chaoslabs.xyz/blog).
+<a name="explicit-usage">More on this here!</a>
+
+### Set Prices trends with the following config
+
+```js
+await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
+  delta: 10,
+  priceFunction: "volatile",
+  initialPrice: 0,
+});
+```
+
+Grab a config via the [Chainlink portal!](https://chainlink.chaoslabs.xyz/oracle-configuration/chainlink)
+
+<a name="config-usage">More on this here!</a>
 
 ## Why is Mocking Oracle values useful in testing?
 
 Oracle values trigger internal state changes in web3 applications. Currently, when forking mainnent, oracle returns values are constant. This is because the Chainlink protocol only writes updated values to mainnet or public testnets. We want the ability to mock return values easily, so we can test how our contracts / applications react to different types of external data, hence this tool. Below, we provide some specific use cases for mocking oracle return values.
+
+For a full deep dive to the project architecture please visit the [Chaos Labs blog](https://chaoslabs.xyz/blog).
 
 ## Use Cases
 
@@ -42,8 +62,6 @@ We're going to need an instance of a `hardhat` mainnet fork running in a separat
 
 ## Installation
 
-<_A step-by-step guide on how to install the plugin_>
-
 **Step 1**
 
 ```bash
@@ -64,16 +82,34 @@ Or if you are using TypeScript, in your `hardhat.config.ts`:
 import "@chaos-labs/chainlink-hardhat-plugin";
 ```
 
-## Usage
+## <a name="explicit-usage"></a> Usage - Set Prices Explicity
+
+In this example we will explicitly set the return value of a Chainlink price feed.
 
 ```js
 const chainlinkConfig = new hre.ChainlinkPriceFeedConfig(this.hre);
 await chainlinkConfig.initChainlinkPriceFeedConfig("ETH/USD", "Mainnet");
-const prevPrice = await chainlinkConfig.getPrice();
-console.log(`prev price is ${prevPrice}`);
+const prevPrice = await chainlinkConfig.getPrice(); // original price at time of mainnet fork
 await chainlinkConfig.setPrice("555");
-const nextPrice = await chainlinkConfig.getPrice();
-console.log(`next price is ${nextPrice}`);
+const nextPrice = await chainlinkConfig.getPrice(); // 555
+```
+
+## <a name="config-usage"></a> Usage - Set Prices via Configuration
+
+Some test cases require testing trends in pricing. For example, we may want to test examples in which _TokenA_ is decreasing in a monotonic fashion. For this use case we can grab a Chainlink Configuration object and pass it to the `initChainlinkPriceFeedConfig` initializer.
+
+```js
+const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
+await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
+  delta: 10,
+  priceFunction: "volatile",
+  initialPrice: 0,
+});
+let price = await chainlinkConfig.getPrice(ticker); // 0
+await chainlinkConfig.nextPrice(ticker);
+price = await chainlinkConfig.getPrice(ticker); // -10
+await chainlinkConfig.nextPrice(ticker);
+price = await chainlinkConfig.getPrice(ticker); // 20
 ```
 
 ## Run Tests
