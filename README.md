@@ -18,7 +18,7 @@ await chainlinkConfig.initChainlinkPriceFeedConfig("ETH/BTC", "Mainnet");
 
 ```js
 await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
-  delta: 10,
+  priceDelta: 10,
   priceFunction: "volatile",
   initialPrice: 0,
 });
@@ -101,7 +101,7 @@ Some test cases require testing trends in pricing. For example, we may want to t
 ```js
 const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
 await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
-  delta: 10,
+  priceDelta: 10,
   priceFunction: "volatile",
   initialPrice: 0,
 });
@@ -114,7 +114,9 @@ price = await chainlinkConfig.getPrice(ticker); // 20
 
 ## Run Tests
 
-Run tests with the following command:
+1. Restart the mainnet fork for a fresh state.
+
+2. Run tests with the following command:
 
 ```bash
 npm run build && npm run test

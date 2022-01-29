@@ -11,7 +11,7 @@ import { DeploySetterContract } from "./chainlink-config/contracts";
 const SUPPORTED_PRICE_FUNCTIONS = ["ascending", "descending", "volatile"];
 
 interface InputPriceConfig {
-  delta: number;
+  priceDelta: number;
   priceFunction: string;
   initialPrice: number;
 }
@@ -120,14 +120,14 @@ export class ChainlinkPriceFeedConfig {
         await this.setPrice(
           ticker,
           config.priceConfig.initialPrice +
-            config.steps * config.priceConfig.delta
+            config.steps * config.priceConfig.priceDelta
         );
         break;
       case "descending":
         await this.setPrice(
           ticker,
           config.priceConfig.initialPrice -
-            config.steps * config.priceConfig.delta
+            config.steps * config.priceConfig.priceDelta
         );
         break;
       case "volatile":
@@ -135,7 +135,7 @@ export class ChainlinkPriceFeedConfig {
           ticker,
           config.priceConfig.initialPrice +
             this.volatileDirection(config) *
-              (config.steps * config.priceConfig.delta)
+              (config.steps * config.priceConfig.priceDelta)
         );
         break;
       default:
