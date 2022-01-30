@@ -18,6 +18,9 @@ await chainlinkConfig.initChainlinkPriceFeedConfig("ETH/BTC", "Mainnet");
 
 ### Set Prices trends with the following config
 
+https://user-images.githubusercontent.com/8246234/151700339-b4ca4706-697d-40b9-be7d-f603cd7be6c5.mov
+
+
 ```js
 await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
   priceDelta: 10,
