@@ -50,7 +50,6 @@ describe("Set price of 1INCH/USD", function () {
         const prevPrice = await chainlinkConfig.getPrice(ticker);
         await chainlinkConfig.setPrice(ticker, 555);
         const nextPrice = await chainlinkConfig.getPrice(ticker);
-        // console.log(prevPrice, nextPrice);
         assert.notEqual(prevPrice, nextPrice);
       });
     });
@@ -124,7 +123,7 @@ describe("Use price config", function () {
     });
 });
 
-describe("Use price config", function () {
+describe("Use price config - Const", function () {
   const ticker = TICKERS[2];
   this.timeout(30000),
     describe("Initial price is set via price config", function () {
@@ -133,19 +132,19 @@ describe("Use price config", function () {
         await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
           priceDelta: 10,
           priceFunction: "ascending",
-          initialPrice: 0,
+          initialPrice: 1,
         });
         const price = await chainlinkConfig.getPrice(ticker);
-        assert.equal(price.toNumber(), 0);
+        assert.equal(price.toString(), "1");
       });
     });
 });
 
-describe("Use price config", function () {
+describe("Use price config Ascending", function () {
   const ticker = TICKERS[3];
   this.timeout(30000),
     describe("Ascending - Iterator works", function () {
-      it.skip(`Set price for ${ticker}`, async function () {
+      it(`Set price for ${ticker}`, async function () {
         const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
         await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
           priceDelta: 10,
@@ -153,15 +152,15 @@ describe("Use price config", function () {
           initialPrice: 0,
         });
         const initPrice = await chainlinkConfig.getPrice(ticker);
-        assert.equal(initPrice.toNumber(), 0);
+        assert.equal(initPrice.toString(), "0");
         await chainlinkConfig.nextPrice(ticker);
         const nextPrice = await chainlinkConfig.getPrice(ticker);
-        assert.equal(nextPrice.toNumber(), 10);
+        assert.equal(nextPrice.toString(), "10");
       });
     });
 });
 
-describe("Use price config", function () {
+describe("Use price config Descending", function () {
   const ticker = TICKERS[4];
   this.timeout(30000),
     describe("Descending - Iterator works", function () {
@@ -173,15 +172,15 @@ describe("Use price config", function () {
           initialPrice: 0,
         });
         const initPrice = await chainlinkConfig.getPrice(ticker);
-        assert.equal(initPrice.toNumber(), 0);
+        assert.equal(initPrice.toString(), "0");
         await chainlinkConfig.nextPrice(ticker);
         const nextPrice = await chainlinkConfig.getPrice(ticker);
-        assert.equal(nextPrice.toNumber(), -10);
+        assert.equal(nextPrice.toString(), "-10");
       });
     });
 });
 
-describe("Use price config", function () {
+describe("Use price config Volatile", function () {
   const ticker = TICKERS[5];
   this.timeout(30000),
     describe("Volatile - Iterator works", function () {
@@ -193,13 +192,13 @@ describe("Use price config", function () {
           initialPrice: 0,
         });
         let price = await chainlinkConfig.getPrice(ticker);
-        assert.equal(price.toNumber(), 0);
+        assert.equal(price.toString(), "0");
         await chainlinkConfig.nextPrice(ticker);
         price = await chainlinkConfig.getPrice(ticker);
-        assert.equal(price.toNumber(), -10);
+        assert.equal(price.toString(), "-10");
         await chainlinkConfig.nextPrice(ticker);
         price = await chainlinkConfig.getPrice(ticker);
-        assert.equal(price.toNumber(), 20);
+        assert.equal(price.toString(), "20");
       });
     });
 });
