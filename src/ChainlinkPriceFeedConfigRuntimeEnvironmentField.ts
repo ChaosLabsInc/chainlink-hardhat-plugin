@@ -49,7 +49,9 @@ export class ChainlinkPriceFeedConfig {
     ) {
       throw new Error("Invalid price function provided");
     }
-    this.chainlinkPriceFeeds = await ChainlinkDataFeeds.getAllPriceFeeds();
+    if (this.chainlinkPriceFeeds === undefined) {
+      this.chainlinkPriceFeeds = await ChainlinkDataFeeds.getAllPriceFeeds();
+    }
     this.currentEthereumNetwork = network;
     const parsedTicker = this.parseTicker(ticker);
     const proxyAddress = await this.convertTickerToProxyAddress(parsedTicker);
@@ -63,7 +65,7 @@ export class ChainlinkPriceFeedConfig {
       steps: 0,
     });
     if (priceConfig) {
-      this.setPrice(ticker, priceConfig.initialPrice);
+      await this.setPrice(ticker, priceConfig.initialPrice);
     }
     return this;
   }
