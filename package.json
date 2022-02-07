@@ -1,6 +1,6 @@
 {
   "name": "@chaos-labs/chainlink-hardhat-plugin",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Hardhat plugin for configuring Chainlink price feed return values when forking mainnet.",
   "repository": "github:ChaosLabsInc/chainlink-hardhat-plugin",
   "author": "Chaos Labs Inc.",
