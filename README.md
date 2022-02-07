@@ -119,6 +119,13 @@ await chainlinkConfig.nextPrice(ticker);
 price = await chainlinkConfig.getPrice(ticker); // 20
 ```
 
+### How Do Prices Behave As We Query Next Price?
+
+The following image shows the price behavior between subsequent calls to `nextPrice(ticker)`
+
+![image](https://user-images.githubusercontent.com/8246234/152855835-b5491015-b492-4f8e-a269-81ae06455bf2.png)
+
+
 ## Run Tests
 
 1. Restart the mainnet fork for a fresh state.
