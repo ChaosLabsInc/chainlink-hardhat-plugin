@@ -119,6 +119,13 @@ await chainlinkConfig.nextPrice(ticker);
 price = await chainlinkConfig.getPrice(ticker); // 20
 ```
 
+**Copy Config To Clipboard**
+
+After selecting a math function to describe the direction of oracle change, please click on the Export Button. This will pop up a dialog. Click the "Copy" button to copy the config to your clipboard or download it as a json file with the "Download" button.
+
+
+<img width="1784" alt="Screen Shot 2022-02-08 at 8 18 33 PM" src="https://user-images.githubusercontent.com/8246234/153115569-a53a83d1-aabd-4c12-bb8e-5b608e3bff05.png">
+
 ### How Do Prices Behave As We Query Next Price?
 
 The following image shows the price behavior between subsequent calls to `nextPrice(ticker)`
