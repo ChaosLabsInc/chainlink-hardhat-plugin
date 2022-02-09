@@ -94,9 +94,9 @@ In this example we will explicitly set the return value of a Chainlink price fee
 ```js
 const chainlinkConfig = new hre.ChainlinkPriceFeedConfig(this.hre);
 await chainlinkConfig.initChainlinkPriceFeedConfig("ETH/USD", "Mainnet");
-const prevPrice = await chainlinkConfig.getPrice(); // original price at time of mainnet fork
-await chainlinkConfig.setPrice("555");
-const nextPrice = await chainlinkConfig.getPrice(); // 555
+const prevPrice = await chainlinkConfig.getPrice("ETH/USD"); // original price at time of mainnet fork
+await chainlinkConfig.setPrice("ETH/USD", 555);
+const nextPrice = await chainlinkConfig.getPrice("ETH/USD"); // 555
 ```
 
 ## <a name="configusage"></a> Usage - Set Prices via Configuration
