@@ -143,7 +143,7 @@ await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
   initialPrice: 0,
 })
 ``` 
-as the third parameter (replacing the `config` variable with the object literal.
+as the third parameter - replacing the `config` variable with the object literal.
 
 ### How Do Prices Behave As We Query Next Price?
 
