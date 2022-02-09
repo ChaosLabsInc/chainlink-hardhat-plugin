@@ -137,7 +137,7 @@ After selecting a math function to describe the direction of oracle change, plea
 Now that our config has been copied to our keyboard we can copy it into our `hardhat` script. You can set the paste as the value of the `config` variable above or paste it directly into the init method: 
 
 ```js
-chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
+await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
   priceDelta: 10,
   priceFunction: "volatile",
   initialPrice: 0,
