@@ -134,11 +134,16 @@ After selecting a math function to describe the direction of oracle change, plea
 
 **Paste Config into Hardhat Script**
 
-Now that our config has been copied to our keyboard we can copy it into our `hardhat` script. You can set the paste as the value of the `config` variable above or paste it directly into the `chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
+Now that our config has been copied to our keyboard we can copy it into our `hardhat` script. You can set the paste as the value of the `config` variable above or paste it directly into the init method: 
+
+```js
+chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
   priceDelta: 10,
   priceFunction: "volatile",
   initialPrice: 0,
-})` as the third parameter (replacing the `config` variable with the object literal.
+})
+``` 
+as the third parameter (replacing the `config` variable with the object literal.
 
 ### How Do Prices Behave As We Query Next Price?
 
