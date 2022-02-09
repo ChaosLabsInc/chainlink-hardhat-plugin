@@ -63,7 +63,8 @@ With the ability to manipulate Chainlink Oracle return values, simulating such s
 
 ## Prerequisites
 
-We're going to need an instance of a `hardhat` mainnet fork running in a separate terminal window. For a quickstart, follow the installation steps in our [Chaos Labs demo repo](https://github.com/ChaosLabsInc/demo-plugins-repo).
+* We're going to need an instance of a `hardhat` mainnet fork running in a separate terminal window. For a quickstart, follow the installation steps in our [Chaos Labs demo repo](https://github.com/ChaosLabsInc/demo-plugins-repo).
+* We assume you have npm installed, if not go to https://nodejs.org/en/download/ and follow the instructions.
 
 ## Installation
 
