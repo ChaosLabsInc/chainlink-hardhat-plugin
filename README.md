@@ -22,11 +22,12 @@ https://user-images.githubusercontent.com/8246234/151700339-b4ca4706-697d-40b9-b
 
 
 ```js
-await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
+const config = {
   priceDelta: 10,
   priceFunction: "volatile",
   initialPrice: 0,
-});
+};
+await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", config);
 ```
 
 Grab a config via the [Chainlink portal!](https://chainlink.chaoslabs.xyz/oracle-configuration/chainlink)
@@ -111,11 +112,12 @@ Some test cases require testing trends in pricing. For example, we may want to t
 
 ```js
 const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
-await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
+const config = {
   priceDelta: 10,
   priceFunction: "volatile",
   initialPrice: 0,
-});
+};
+await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", config);
 let price = await chainlinkConfig.getPrice(ticker); // 0
 await chainlinkConfig.nextPrice(ticker);
 price = await chainlinkConfig.getPrice(ticker); // -10
@@ -129,6 +131,10 @@ After selecting a math function to describe the direction of oracle change, plea
 
 
 <img width="1784" alt="Screen Shot 2022-02-08 at 8 18 33 PM" src="https://user-images.githubusercontent.com/8246234/153115569-a53a83d1-aabd-4c12-bb8e-5b608e3bff05.png">
+
+**Paste Config into Hardhat Script**
+
+Now that our config has been copied it to our keyboard we can copy it into our `hardhat` script. You can set the paste as the value of the `config` variable above or paste it directly into the `chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", config)` as the third parameter.
 
 ### How Do Prices Behave As We Query Next Price?
 
