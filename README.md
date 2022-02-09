@@ -93,8 +93,11 @@ In this example we will explicitly set the return value of a Chainlink price fee
 
 ```js
 const chainlinkConfig = new hre.ChainlinkPriceFeedConfig(this.hre);
+// Here we set the plugin to work with ETH/USD pair on Mainnet:
 await chainlinkConfig.initChainlinkPriceFeedConfig("ETH/USD", "Mainnet");
+// Now we query the price, this is to allow better decision making in setting up the mocked price:
 const prevPrice = await chainlinkConfig.getPrice("ETH/USD"); // original price at time of mainnet fork
+// We mock the price of the return value fo the token to 555 instead of the original price:
 await chainlinkConfig.setPrice("ETH/USD", 555);
 const nextPrice = await chainlinkConfig.getPrice("ETH/USD"); // 555
 ```
