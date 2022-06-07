@@ -74,12 +74,20 @@ export class ChainlinkPriceFeedConfig {
     return ticker.replace(/\s+/g, "");
   }
 
-  private getTickerConfig(ticker: string): TickerConfig {
+  public getTickerConfig(ticker: string): TickerConfig {
     const config = this.tickerConfigs.get(this.parseTicker(ticker));
     if (config === undefined) {
       throw new Error("Ticket not intialized");
     }
     return config;
+  }
+
+  public getMockedChainlinkAggregatorAddressForTicker(ticker: string): string {
+    const config = this.tickerConfigs.get(this.parseTicker(ticker));
+    if (config === undefined) {
+      throw new Error("Ticket not intialized");
+    }
+    return config.aggregatorContractAddress;
   }
 
   private async deployMockerContract(proxyAddress: string): Promise<Contract> {
@@ -155,4 +163,5 @@ export class ChainlinkPriceFeedConfig {
     const config = this.getTickerConfig(ticker);
     await config.mockerContract.setAnswer(price);
   }
+
 }

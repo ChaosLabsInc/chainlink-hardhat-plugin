@@ -20,7 +20,6 @@ await chainlinkConfig.initChainlinkPriceFeedConfig("ETH/BTC", "Mainnet");
 
 https://user-images.githubusercontent.com/8246234/151700339-b4ca4706-697d-40b9-be7d-f603cd7be6c5.mov
 
-
 ```js
 const config = {
   priceDelta: 10,
@@ -64,8 +63,8 @@ With the ability to manipulate Chainlink Oracle return values, simulating such s
 
 ## Prerequisites
 
-* We're going to need an instance of a `hardhat` mainnet fork running in a separate terminal window. For a quickstart, follow the installation steps in our [Chaos Labs demo repo](https://github.com/ChaosLabsInc/demo-plugins-repo).
-* We assume you have npm installed, if not go to https://nodejs.org/en/download/ and follow the instructions.
+- We're going to need an instance of a `hardhat` mainnet fork running in a separate terminal window. For a quickstart, follow the installation steps in our [Chaos Labs demo repo](https://github.com/ChaosLabsInc/demo-plugins-repo).
+- We assume you have npm installed, if not go to https://nodejs.org/en/download/ and follow the instructions.
 
 ## Installation
 
@@ -129,20 +128,20 @@ price = await chainlinkConfig.getPrice(ticker); // 20
 
 After selecting a math function to describe the direction of oracle change, please click on the Export Button. This will pop up a dialog. Click the "Copy" button to copy the config to your clipboard or download it as a json file with the "Download" button.
 
-
 <img width="1784" alt="Screen Shot 2022-02-08 at 8 18 33 PM" src="https://user-images.githubusercontent.com/8246234/153115569-a53a83d1-aabd-4c12-bb8e-5b608e3bff05.png">
 
 **Paste Config into Hardhat Script**
 
-Now that our config has been copied to our keyboard we can copy it into our `hardhat` script. You can set the paste as the value of the `config` variable above or paste it directly into the init method: 
+Now that our config has been copied to our keyboard we can copy it into our `hardhat` script. You can set the paste as the value of the `config` variable above or paste it directly into the init method:
 
 ```js
 await chainlinkConfig.initChainlinkPriceFeedConfig(ticker, "Mainnet", {
   priceDelta: 10,
   priceFunction: "volatile",
   initialPrice: 0,
-})
-``` 
+});
+```
+
 as the third parameter - replacing the `config` variable with the object literal.
 
 ### How Do Prices Behave As We Query Next Price?
@@ -150,7 +149,6 @@ as the third parameter - replacing the `config` variable with the object literal
 The following image shows the price behavior between subsequent calls to `nextPrice(ticker)`
 
 ![image](https://user-images.githubusercontent.com/8246234/152855835-b5491015-b492-4f8e-a269-81ae06455bf2.png)
-
 
 ## Run Tests
 

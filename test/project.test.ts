@@ -73,6 +73,46 @@ describe("Set price of AAVE/USD", function () {
     });
 });
 
+describe("Fetch AAVE/USD Ticker Config ", function () {
+  const ticker = "AAVE/USD";
+  this.timeout(30000),
+    describe("Check Ticker Config", function () {
+      it("Gets AAVE/USD Ticker Config", async function () {
+        const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
+        await chainlinkConfig.initChainlinkPriceFeedConfig(
+          ticker,
+          "Mainnet"
+        );
+        await chainlinkConfig.getPrice(ticker);
+        await chainlinkConfig.setPrice(ticker, 555);
+        await chainlinkConfig.getPrice(ticker);
+        const tickerConfig = chainlinkConfig.getTickerConfig(ticker)
+        assert.isString(tickerConfig.ticker); // AAVE/USD
+        assert.isString(tickerConfig.proxyAddress); // Chainlink price feed address
+        assert.isString(tickerConfig.aggregatorContractAddress); // mocker contract address
+      });
+    });
+});
+
+describe("Fetch AAVE/USD Ticker MockedContractAddress ", function () {
+  const ticker = "AAVE/USD";
+  this.timeout(30000),
+    describe("Check Ticker Config", function () {
+      it("Gets AAVE/USD Ticker Config", async function () {
+        const chainlinkConfig = new ChainlinkPriceFeedConfig(this.hre);
+        await chainlinkConfig.initChainlinkPriceFeedConfig(
+          ticker,
+          "Mainnet"
+        );
+        await chainlinkConfig.getPrice(ticker);
+        await chainlinkConfig.setPrice(ticker, 555);
+        await chainlinkConfig.getPrice(ticker);
+        const mockedChainlinkContractAddress = chainlinkConfig.getMockedChainlinkAggregatorAddressForTicker(ticker)
+        assert.isString(mockedChainlinkContractAddress); // mocker contract address
+      });
+    });
+});
+
 describe("Set price of non existent ticker ABC/USD", function () {
   const ticker = "ABC/USD";
   this.timeout(30000),
